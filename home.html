@@ -173,7 +173,9 @@ $isLoggedIn = isset($_SESSION['user_id']);
     <nav class="navbar">
         <div class="logo">NexoraX</div>
         <ul class="nav-links">
-            <li><a href="<?php echo $isLoggedIn ? 'includes/service.php' : 'includes/login.html'; ?>">Services</a></li>
+    <a href="<?php echo $isLoggedIn ? 'includes/service.php' : 'includes/login.html'; ?>">
+        Services
+    </a>
             <li><a href="<?php echo $isLoggedIn ? 'includes/portfolio.php' : 'includes/login.php'; ?>">Portfolio</a></li>
             <li><a href="<?php echo $isLoggedIn ? 'includes/contact.php' : 'includes/login.php'; ?>">Contact</a></li>
             <li><a href="<?php echo $isLoggedIn ? 'includes/aboutus.php' : 'includes/login.php'; ?>">About Us</a></li>
