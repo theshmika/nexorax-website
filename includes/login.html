@@ -1,0 +1,240 @@
+<?php
+session_start(); // Start session to manage login state
+
+// Check if the user is already logged in
+if (isset($_SESSION['user_id'])) {
+    header('Location: home.php'); // Redirect if user is already logged in
+    exit();
+}
+
+// Initialize error message
+$error = '';
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Grab form data
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    // Example validation
+    if (empty($username) || empty($password)) {
+        $error = "Username and password cannot be empty!";
+    } else {
+        // Connect to the database (assuming MySQL connection here)
+        $conn = new mysqli('localhost', 'root', '', 'nexorax');
+
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+        }
+
+        // Query the database for user data
+        $stmt = $conn->prepare("SELECT id, name, password FROM users WHERE name = ?");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $stmt->store_result();
+        $stmt->bind_result($user_id, $db_username, $db_password);
+        $stmt->fetch();
+
+        // Check if username exists and password matches
+        if ($stmt->num_rows > 0 && password_verify($password, $db_password)) {
+            // Login successful, set session variables
+            $_SESSION['user_id'] = $user_id;
+            $_SESSION['name'] = $username;
+            header('Location: ../home.php'); // Redirect to dashboard after successful login
+            exit();
+        } else {
+            $error = "Invalid username or password!";
+        }
+
+        $stmt->close();
+        $conn->close();
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login | NexoraX Creations</title>
+    <link rel="stylesheet" href="style.css"> <!-- Link to the updated stylesheet -->
+</head>
+<body>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+        /* Global Styles */
+body {
+    height: 100vh;
+    background: url('../pics/login.jpg') no-repeat center center fixed; /* Add your background image here */
+    background-size: cover;
+    font-family: 'Poppins', sans-serif;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+/* Animated stars background */
+body::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: url('https://www.transparenttextures.com/patterns/stardust.png');
+    animation: moveBg 60s linear infinite;
+    opacity: 0.2;
+}
+
+@keyframes moveBg {
+    0% { background-position: 0 0; }
+    100% { background-position: 1000px 1000px; }
+}
+
+        /* Form Container */
+        .container {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            width: 90%;
+            max-width: 450px;
+            color: #fff;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+/* Login Box */
+.login-form {
+    z-index: 1;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    backdrop-filter: blur(5px);
+    padding: 40px;
+    width: 400px;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+    color: #fff;
+    animation: fadeInUp 1s ease-out;
+    position: relative;
+}
+
+@keyframes fadeInUp {
+    0% {
+        transform: translateY(40px);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.login-form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #00eaff;
+    font-weight: 600;
+}
+
+input[type="text"],
+input[type="password"] {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    margin-bottom: 20px;
+    transition: 0.3s ease;
+}
+
+input:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 8px #00eaff;
+}
+
+.btn {
+    width: 100%;
+    padding: 14px;
+    background: #00eaff;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn:hover {
+    background: #00bcd4;
+}
+
+.error {
+    background: rgba(255, 0, 0, 0.2);
+    padding: 10px;
+    border-radius: 6px;
+    color: #ff4b4b;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+p {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+a {
+    color: #00eaff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Logo styling */
+.logo {
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 20px;
+    display: block;
+    border-radius: 50%;
+}
+</style>
+
+
+<div class="login-form">
+    <img src="../pics/logo.jpg" alt="NexoraX Logo" class="logo"> <!-- Logo (Optional) -->
+    <h2>Login</h2>
+
+    <!-- Display error if exists -->
+    <?php if ($error): ?>
+        <div class="error"><?php echo $error; ?></div>
+    <?php endif; ?>
+
+    <form action="login.php" method="POST">
+        <div class="form-group">
+            <input type="text" name="username" placeholder="Username" required>
+        </div>
+        <div class="form-group">
+            <input type="password" name="password" placeholder="Password" required>
+        </div>
+        <button type="submit" class="btn">Login</button>
+    </form>
+    <p>
+        Don't have an account? <a href="register.php">Register</a>
+    </p>
+
+    <p>
+        Back to Home? <a href="../home.php">Home</a>
+    </p>
+
+</div>
+</html>

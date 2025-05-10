@@ -1,0 +1,256 @@
+﻿<?php
+session_start();
+include 'dbconnect.php';
+
+$service_id = isset($_GET['service']) ? intval($_GET['service']) : 0;
+
+$sql = "SELECT * FROM services WHERE id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $service_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $service_name = $row['service_name'] ?? 'Service Name';
+    $service_description = $row['service_description'] ?? 'No description available.';
+    $service_price = $row['service_price_range'] ?? 'Contact us for pricing.';
+} else {
+    echo "Service not found!";
+    exit;
+}
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= htmlspecialchars($service_name); ?> - NexoraX</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #007cf0;
+            --secondary: #00dfd8;
+            --bg-light: #f4f8fb;
+            --text-dark: #333;
+            --white: #fff;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+        header {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: var(--white);
+            text-align: center;
+            padding: 60px 20px;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+        }
+        header h1 {
+            font-size: 3rem;
+        }
+        header p {
+            font-size: 1.2rem;
+            margin-top: 10px;
+        }
+        .price {
+            margin-top: 15px;
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            padding: 40px 20px;
+        }
+
+        section {
+            margin-top: 50px;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .team {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .team-member {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+        }
+
+        .team-member img {
+            width: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .team-member h4 {
+            margin-top: 15px;
+            font-size: 1.1rem;
+        }
+
+        .form-section form {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-section input,
+        .form-section textarea {
+            width: 100%;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            font-size: 1rem;
+        }
+
+        .form-section button {
+            margin-top: 20px;
+            background: var(--primary);
+            color: var(--white);
+            padding: 15px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        .form-section button:hover {
+            background: var(--secondary);
+            color: #000;
+        }
+
+        .success-message {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .contact-section p {
+            font-size: 1.1rem;
+            margin: 5px 0;
+        }
+
+        footer {
+            background: #eaeaea;
+            text-align: center;
+            padding: 20px;
+            margin-top: 60px;
+        }
+
+        .chat-box {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        @media(max-width: 600px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            .form-section form {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1><?= htmlspecialchars($service_name); ?></h1>
+        <p><?= htmlspecialchars($service_description); ?></p>
+        <p class="price">Price Range: <?= htmlspecialchars($service_price); ?></p>
+    </header>
+
+    <div class="container">
+
+        <section class="team-section">
+            <h2>Meet Our Experts</h2>
+            <div class="team">
+                <div class="team-member">
+                    <img src="team1.jpg" alt="Alice - Project Manager">
+                    <h4>Alice - Project Manager</h4>
+                    <p>Expert in agile methodologies and client success delivery.</p>
+                </div>
+                <div class="team-member">
+                    <img src="team2.jpg" alt="Bob - Lead Developer">
+                    <h4>Bob - Lead Developer</h4>
+                    <p>Specialist in scalable architecture & full-stack engineering.</p>
+                </div>
+                <div class="team-member">
+                    <img src="team3.jpg" alt="Clara - UI/UX Designer">
+                    <h4>Clara - UI/UX Designer</h4>
+                    <p>Creative lead in crafting modern, intuitive user experiences.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="form-section">
+            <h2>Get a Personalized Quote</h2>
+            <?php if (isset($_GET['success']) && $_GET['success'] == 1): ?>
+                <div class="success-message">
+                    🎉 Your quote request was successfully submitted!
+                </div>
+            <?php endif; ?>
+            <form action="purchase_service.php" method="POST">
+                <input type="text" name="name" placeholder="Your Full Name" required>
+                <input type="email" name="email" placeholder="Your Email Address" required>
+                <input type="hidden" name="service" value="<?= htmlspecialchars($service_name); ?>">
+                <textarea name="message" placeholder="Tell us more about your requirements..." rows="5" required></textarea>
+                <button type="submit">Request Quote</button>
+            </form>
+        </section>
+
+        <section class="contact-section">
+            <h2>Need Help?</h2>
+            <p>📧 Email: <strong>support@nexorax.com</strong></p>
+            <p>📞 Phone: <strong>+94 712 345 678</strong></p>
+            <p>🕘 Available: Monday to Friday, 9am – 6pm</p>
+        </section>
+
+    </div>
+
+    <div class="chat-box" onclick="alert('💬 Live Chat feature coming soon!')">
+        💬 Live Chat
+    </div>
+
+    <footer>
+        &copy; 2025 NexoraX. All rights reserved.
+    </footer>
+
+</body>
+</html>

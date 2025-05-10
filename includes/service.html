@@ -1,0 +1,364 @@
+<?php
+session_start();
+include 'dbconnect.php'; // Ensure this connects to the 'nexorax' database
+
+$sql = "SELECT * FROM services";
+$result = $conn->query($sql);
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>NexoraX - Our Services</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: url('https://images.unsplash.com/photo-1605152276897-4f618f831968?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+            overflow-x: hidden;
+            animation: fadeIn 2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .overlay {
+            background: rgba(0, 0, 0, 0.7);
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+
+        /* Navbar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .navbar .logo {
+            font-size: 1.6em;
+            color: #1f8ef1;
+            font-weight: 600;
+        }
+
+        .navbar ul {
+            list-style: none;
+            display: flex;
+            gap: 25px;
+        }
+
+        .navbar ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .navbar ul li a:hover {
+            color: #00d4ff;
+        }
+
+        .navbar .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .navbar .menu-toggle div {
+            width: 25px;
+            height: 3px;
+            background: #fff;
+            margin: 4px 0;
+        }
+
+        @media (max-width: 768px) {
+            .navbar ul {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 60px;
+                right: 20px;
+                background: rgba(0, 0, 0, 0.9);
+                padding: 15px 20px;
+                border-radius: 10px;
+            }
+
+            .navbar ul.active {
+                display: flex;
+            }
+
+            .navbar .menu-toggle {
+                display: flex;
+            }
+        }
+
+        .header {
+            padding: 40px 20px 20px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            color: #ccc;
+            animation: fadeIn 1.8s ease-in-out;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            animation: fadeIn 2.2s ease-in-out;
+        }
+
+        .container h2 {
+            font-size: 2.8em;
+            text-align: center;
+            margin-bottom: 40px;
+            color: #1f8ef1;
+            position: relative;
+        }
+
+        .container h2::after {
+            content: '';
+            width: 80px;
+            height: 4px;
+            background: #1f8ef1;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: -10px;
+            border-radius: 2px;
+        }
+
+        .service-cards-wrapper {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .service-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            color: #fff;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        .service-card h3 {
+            font-size: 1.6em;
+            color: #00d4ff;
+            margin-bottom: 10px;
+        }
+
+        .service-card p {
+            font-size: 0.95em;
+            line-height: 1.6;
+            color: #ddd;
+            margin-bottom: 8px;
+        }
+
+        .service-card button {
+            background: #1f8ef1;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-top: 10px;
+            transition: background 0.3s ease;
+        }
+
+        .service-card button:hover {
+            background: #0f7ae5;
+        }
+
+        .footer {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 40px 20px;
+            color: #ddd;
+            font-size: 0.95em;
+            animation: fadeIn 2.5s ease-in-out;
+            margin-top: auto;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .footer-section h3, .footer-section h4 {
+            color: #1f8ef1;
+            font-size: 1.3em;
+            margin-bottom: 10px;
+        }
+
+        .footer-section a {
+            color: #1f8ef1;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: #00d4ff;
+            text-decoration: underline;
+        }
+
+        .footer-section p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .footer-section i {
+            margin-right: 8px;
+            color: #00d4ff;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .container h2 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">NexoraX</div>
+        <div class="menu-toggle" onclick="toggleMenu()">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <ul id="nav-links">
+            <li><a href="../home.php">Home</a></li>
+            <li><a href="services.php">Services</a></li>
+            <li><a href="about.php">About</a></li>
+            <li><a href="contact.php">Contact</a></li>
+            <?php
+                if (isset($_SESSION['username'])) {
+                    echo '<li><a href="logout.php">Logout</a></li>';
+                } else {
+                    echo '<li><a href="login.php">Login</a></li>';
+                }
+            ?>
+        </ul>
+    </nav>
+
+    <div class="overlay">
+        <div class="header">
+            <h1>NexoraX Solutions</h1>
+            <p>Innovative Services to Power Your Digital Growth</p>
+        </div>
+
+        <div class="container">
+            <h2>Our Services</h2>
+            <div class="service-cards-wrapper">
+                <?php
+                if ($result->num_rows > 0) {
+                    while($row = $result->fetch_assoc()) {
+                        $serviceName = htmlspecialchars($row['service_name']);
+                        $serviceDescription = htmlspecialchars($row['service_description']);
+                        $servicePriceRange = htmlspecialchars($row['service_price_range']);
+                        $serviceCategory = htmlspecialchars($row['service_category']);
+
+                        echo '
+                        <div class="service-card">
+                            <h3>' . $serviceName . '</h3>
+                            <p>' . $serviceDescription . '</p>
+                            <p><strong>Price Range:</strong> ' . $servicePriceRange . '</p>
+                            <p><strong>Category:</strong> ' . $serviceCategory . '</p>
+                            <button onclick="window.location.href=\'service_details.php?service=' . $row['id'] . '\'">Learn More</button>
+                        </div>';
+                    }
+                } else {
+                    echo '<p style="color: white;">No services found.</p>';
+                }
+                ?>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-container">
+                <div class="footer-section branding">
+                    <h3>NexoraX</h3>
+                    <p>&copy; 2025 NexoraX Solutions<br>All rights reserved.</p>
+                    <a href="#">Privacy Policy</a> | <a href="#">Terms</a>
+                </div>
+                <div class="footer-section contact">
+                    <h4>Contact Us</h4>
+                    <p><i class="fas fa-envelope"></i> <a href="mailto:nexoraxcreations@gmail.com">nexoraxcreations@gmail.com</a></p>
+                    <p><i class="fas fa-phone-alt"></i> <a href="tel:+94721023783">+94 72 102 3783</a></p>
+                </div>
+                <div class="footer-section social">
+                    <h4>Follow Us</h4>
+                    <a href="https://www.facebook.com/share/1UfMT3q6Qw/?mibextid=wwXIfrx" target="_blank"><i class="fab fa-facebook-f"></i> Facebook</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        function toggleMenu() {
+            const nav = document.getElementById('nav-links');
+            nav.classList.toggle('active');
+        }
+    </script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</body>
+</html>
+
+<?php
+$conn->close();
+?>

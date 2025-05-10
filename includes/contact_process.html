@@ -1,0 +1,18 @@
+<?php
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $name = htmlspecialchars(strip_tags($_POST['name']));
+    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+    $service = htmlspecialchars(strip_tags($_POST['service']));
+    $message = htmlspecialchars(strip_tags($_POST['message']));
+
+    $to = "your_email@example.com";
+    $subject = "New Contact Request from $name";
+    $body = "Name: $name\nEmail: $email\nService: $service\nMessage:\n$message";
+
+    if (mail($to, $subject, $body)) {
+        echo "Message sent successfully!";
+    } else {
+        echo "Message sending failed.";
+    }
+}
+?>

@@ -1,0 +1,231 @@
+<?php
+session_start(); // Start session to manage login state
+
+// Define login status (assumes 'user_id' is set upon login)
+$isLoggedIn = isset($_SESSION['user_id']);
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NexoraX Creations | Home</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0f2027;
+            color: #ffffff;
+        }
+
+        .navbar {
+            background: linear-gradient(to right, #2c5364, #203a43, #0f2027);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            animation: fadeInDown 1s ease;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: #00d4ff;
+            animation: bounceIn 1.2s ease;
+        }
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #ffffff;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #00d4ff;
+        }
+
+        .hero {
+            background: url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1650&q=80') center/cover no-repeat;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0 20px;
+            animation: fadeIn 1.5s ease;
+        }
+
+        .hero-content {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 40px;
+            border-radius: 15px;
+            max-width: 700px;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5em;
+            color: #00d4ff;
+            margin-bottom: 20px;
+        }
+
+        .hero-content p {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            background: #00d4ff;
+            color: #000;
+            border: none;
+            border-radius: 30px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease-in-out;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            background: #009bcf;
+        }
+
+        .services {
+            padding: 80px 20px;
+            background-color: #16222a;
+            text-align: center;
+        }
+
+        .services h2 {
+            font-size: 2.8em;
+            margin-bottom: 40px;
+            color: #00d4ff;
+        }
+
+        .service-cards {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+        }
+
+        .card {
+            background: #1f2f38;
+            padding: 30px;
+            width: 280px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s, box-shadow 0.3s;
+            animation: fadeInUp 1s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .card h3 {
+            margin-bottom: 15px;
+            color: #00d4ff;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            60% { transform: scale(1.2); opacity: 1; }
+            80% { transform: scale(0.95); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<header>
+    <nav class="navbar">
+        <div class="logo">NexoraX</div>
+        <ul class="nav-links">
+            <li><a href="<?php echo $isLoggedIn ? 'includes/service.php' : 'includes/login.php'; ?>">Services</a></li>
+            <li><a href="<?php echo $isLoggedIn ? 'includes/portfolio.php' : 'includes/login.php'; ?>">Portfolio</a></li>
+            <li><a href="<?php echo $isLoggedIn ? 'includes/contact.php' : 'includes/login.php'; ?>">Contact</a></li>
+            <li><a href="<?php echo $isLoggedIn ? 'includes/aboutus.php' : 'includes/login.php'; ?>">About Us</a></li>
+            <?php if ($isLoggedIn): ?>
+                <li><a href="includes/logout.php">Logout</a></li>
+            <?php else: ?>
+                <li><a href="includes/register.php">Register</a></li>
+                <li><a href="includes/login.php">Login</a></li>
+            <?php endif; ?>
+        </ul>
+    </nav>
+</header>
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-content">
+        <h1>Crafting Digital Experiences</h1>
+        <p>We build powerful websites, applications, and stunning designs tailored for your business.</p>
+        <a href="#services" class="btn">Explore Services</a>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section class="services" id="services">
+    <h2>Our Services</h2>
+    <div class="service-cards">
+        <div class="card">
+            <h3>Web Development</h3>
+            <p>Custom-built, responsive, and high-performing websites.</p>
+        </div>
+        <div class="card">
+            <h3>Web Handling</h3>
+            <p>End-to-end support for maintaining your website’s health.</p>
+        </div>
+        <div class="card">
+            <h3>Web Creation</h3>
+            <p>Modern websites built from scratch with latest technologies.</p>
+        </div>
+        <div class="card">
+            <h3>Graphic Design</h3>
+            <p>Logos, branding, and visuals that captivate your audience.</p>
+        </div>
+        <div class="card">
+            <h3>Application Development</h3>
+            <p>Scalable apps for desktop, mobile, or enterprise systems.</p>
+        </div>
+        <div class="card">
+            <h3>App Handling</h3>
+            <p>Continuous support and updates for your business apps.</p>
+        </div>
+    </div>
+</section>
+
+</body>
+</html>

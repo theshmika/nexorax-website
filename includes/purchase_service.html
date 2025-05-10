@@ -1,0 +1,25 @@
+﻿<?php
+// purchase_service.php
+
+session_start();
+include 'dbconnect.php';
+
+// Capture form data
+$name = $_POST['name'] ?? '';
+$email = $_POST['email'] ?? '';
+$message = $_POST['message'] ?? '';
+$service = $_POST['service'] ?? '';
+
+// Optionally, insert into DB (you can add validation)
+$stmt = $conn->prepare("INSERT INTO quotes (name, email, service, message) VALUES (?, ?, ?, ?)");
+$stmt->bind_param("ssss", $name, $email, $service, $message);
+$stmt->execute();
+
+// Redirect back to service page with alert using JavaScript
+echo "
+<script>
+    alert('🎉 Your quote request was successfully submitted!');
+    window.location.href = 'service.php?service=' + encodeURIComponent('" . $_GET['service'] . "') + '&success=1';
+</script>";
+exit;
+?>
